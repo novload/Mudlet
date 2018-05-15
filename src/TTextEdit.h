@@ -4,7 +4,7 @@
 /***************************************************************************
  *   Copyright (C) 2008-2011 by Heiko Koehn - KoehnHeiko@googlemail.com    *
  *   Copyright (C) 2014 by Ahmed Charles - acharles@outlook.com            *
- *   Copyright (C) 2015, 2018 by Stephen Lyons - slysven@virginmedia.com   *
+ *   Copyright (C) 2015 by Stephen Lyons - slysven@virginmedia.com         *
  *   Copyright (C) 2016-2017 by Ian Adkins - ieadkins@gmail.com            *
  *   Copyright (C) 2017 by Chris Reid - WackyWormer@hotmail.com            *
  *                                                                         *
@@ -24,6 +24,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+
 #include "pre_guard.h"
 #include <QMap>
 #include <QPointer>
@@ -36,7 +37,6 @@
 class Host;
 class TBuffer;
 class TConsole;
-class TChar;
 
 class QScrollBar;
 class QString;
@@ -55,9 +55,6 @@ public:
     void drawFrame(QPainter&, const QRect&);
     void drawBackground(QPainter&, const QRect&, const QColor&);
     void updateLastLine();
-    uint getGraphemeBaseCharacter(const QString& str);
-    void drawLine(QPainter &painter, int lineNumber, int rowOfScreen);
-    int drawGrapheme(QPainter &painter, const QPoint &cursor, const QString &c, int column, TChar &style);
     void drawCharacters(QPainter& painter, const QRect& rect, QString& text, bool isBold, bool isUnderline, bool isItalics, bool isStrikeOut, QColor& fgColor, QColor& bgColor);
     void showNewLines();
     void forceUpdate();
@@ -117,7 +114,6 @@ public slots:
     void slot_popupMenu();
     void slot_copySelectionToClipboardHTML();
     void slot_searchSelectionOnline();
-    void slot_changeIsAmbigousWidthGlyphsToBeWide(const bool);
 
 private:
     void initDefaultSettings();
@@ -154,7 +150,6 @@ private:
     QPixmap mScreenMap;
     int mScreenWidth;
     QTime mLastClickTimer;
-    bool mIsAmbigousWidthGlyphsToBeWide;
 };
 
 #endif // MUDLET_TTEXTEDIT_H
