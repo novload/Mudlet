@@ -4,7 +4,7 @@
 /***************************************************************************
  *   Copyright (C) 2008-2013 by Heiko Koehn - KoehnHeiko@googlemail.com    *
  *   Copyright (C) 2014 by Ahmed Charles - acharles@outlook.com            *
- *   Copyright (C) 2015-2017 by Stephen Lyons - slysven@virginmedia.com    *
+ *   Copyright (C) 2015-2018 by Stephen Lyons - slysven@virginmedia.com    *
  *   Copyright (C) 2016 by Ian Adkins - ieadkins@gmail.com                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -59,6 +59,7 @@ class TMap;
 
 class Host : public QObject
 {
+    Q_OBJECT
     friend class XMLexport;
     friend class XMLimport;
 
@@ -82,6 +83,14 @@ public:
     void               setRetries( int c )              { QMutexLocker locker(& mLock); mRetries=c; }
     int                getTimeout()                     { QMutexLocker locker(& mLock); return mTimeout; }
     void               setTimeout( int seconds )        { QMutexLocker locker(& mLock); mTimeout=seconds; }
+    bool               getUseWideAmbiguousEAsianGlyphs() { QMutexLocker locker(& mLock); return mIsAmbigousWidthGlyphsToBeWide; }
+    // Uses PartiallyChecked to set the automatic mode, otherwise Checked/Unchecked means use wide/narrow ambiguous glyphs
+    void               setUseWideAmbiguousEAsianGlyphs( const Qt::CheckState state );
+    // Is used to set preference dialog control directly:
+    Qt::CheckState     getUseWideAmbiguousEAsianGlyphsControlState() { QMutexLocker locker(& mLock);
+                                                                       return mIsAmbigousWidthGlyphsSettingAutomatic
+                                                                               ? Qt::PartiallyChecked
+                                                                               : (mIsAmbigousWidthGlyphsToBeWide ? Qt::Checked : Qt::Unchecked); }
 
     void closingDown();
     bool isClosingDown();
@@ -329,6 +338,13 @@ public:
     QSet<QChar> mDoubleClickIgnore;
     QPointer<QDockWidget> mpDockableMapWidget;
 
+
+signals:
+    // Tells TTextEdit instances for this profile how to draw the ambiguous
+    // width characters:
+    void signal_changeIsAmbigousWidthGlyphsToBeWide(const bool);
+
+
 private:
     QScopedPointer<LuaInterface> mLuaInterface;
 
@@ -381,6 +397,16 @@ private:
     QPushButton* moduleInstallButton;
 
     bool mHaveMapperScript;
+    // This option makes the control on the preferences tristated so the value
+    // used depends - currently - on what the MUD Server encoding is (only set
+    // true for GBK and GB18030 ones) - however this is likely to be due for
+    // revision once locale/language support is brought in - when it can be
+    // made dependent on that instead.
+    bool mIsAmbigousWidthGlyphsSettingAutomatic;
+    // If above is true is the value deduced from the MUD server encoding, if
+    // the above is false is the user's direct setting - this is so that changes
+    // in the TTextEdit classes are only made when necessary:
+    bool mIsAmbigousWidthGlyphsToBeWide;
 };
 
 #endif // MUDLET_HOST_H
